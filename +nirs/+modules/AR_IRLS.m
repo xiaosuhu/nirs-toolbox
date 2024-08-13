@@ -176,7 +176,8 @@ classdef AR_IRLS < nirs.modules.AbstractGLM
                 end
                 S(i).variables = [link table(condition,'VariableNames',{'cond'})];
                 S(i).beta = vec( stats.beta(1:ncond,:)' );
-                
+                S(i).R2 = stats.R2'; % modified by Frank Hu 20240813
+
                 if(obj.useFstats)
                     S(i).pvalue_fixed=vec(stats.Fpval(1:ncond,:)' );
                 end

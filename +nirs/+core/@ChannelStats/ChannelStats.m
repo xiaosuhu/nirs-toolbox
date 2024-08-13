@@ -15,6 +15,7 @@ classdef ChannelStats
     %     tstat        - (dependent) t-stats of beta
     %     p            - (dependent) p-values of beta
     %     q            - (dependent) q-values of beta (false discovery rate)
+    
     %
     %  Methods:
     %     getCritT    - returns critical t value
@@ -38,6 +39,8 @@ classdef ChannelStats
         probe           % Probe object describing measurement geometry
         demographics    % Dictionary containing demographics info
         basis           % basis set info used to create model
+        R2              % R2 score for the regression modified by Frank Hu 20240813
+
     end
     
     properties ( Dependent = true )
@@ -470,6 +473,8 @@ classdef ChannelStats
             q = obj.q;
             se = sqrt(diag(obj.covb));
             dfe = obj.dfe .* ones(size(p));
+            R2 = obj.R2;  % modified by Frank Hu 20240813
+
             
             [minDiscoverableChange,power] = nirs.math.MDC(obj,.8,.05);
             RelativePower=min(minDiscoverableChange)./minDiscoverableChange;
