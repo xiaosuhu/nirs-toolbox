@@ -1,4 +1,4 @@
-function [beta,bHat,covb,LL,w] = fitlme(X,Y,Z,robust_flag,zero_theta,verbose)
+function [beta,bHat,covb,LL,w, r2] = fitlme(X,Y,Z,robust_flag,zero_theta,verbose)
 % Robust linear mixed-effects model fiting
 % [beta,bHat,covb,LL,w] = nirs.math.fitlme( X, Y, Z, robust_flag, zero_theta_flag, verbose_flag )
 %
@@ -79,7 +79,7 @@ else
 end
 
 %% Solve initial model
-[LL,beta,bHat,covb,sigma2] = solveLME(X,Y,Z,theta);
+[LL,beta,bHat,covb,sigma2,r2] = solveLME(X,Y,Z,theta); % Modified by Frank Hu 20240815
 
 %% Robust loop
 if robust_flag
@@ -207,7 +207,7 @@ LL = nanmean(-LL);
 end
 
 %% Solve the linear mixed effects model
-function [PLogLik,beta,bHat,covb,sigma2] = solveLME(X,Y,Z,theta,weights)
+function [PLogLik,beta,bHat,covb,sigma2, R2] = solveLME(X,Y,Z,theta,weights) % Modified by Frank Hu 20240815
 if nargin<5, weights = speye(size(X,1)); end
 if nargin<4, theta = 0; end
 if nargin<3, Z = []; end
@@ -245,7 +245,7 @@ bHat = Lambda * Deltab;
 % Estimate error
 resid=(Y - X*beta - Z*bHat);
 r2 = sum(Deltab.^2) + sum(resid.^2);
-
+R2 = max(1-mad(Y-X*beta-Z*bHat)/mad(Y), 0); % Modified by Frank Hu 20240815
 
 % Calculate log-likelihood
 PLogLik = (-nT/2)*( 1 + log( 2*pi*r2/nT ) ) - logDet(R);
